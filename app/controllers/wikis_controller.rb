@@ -1,63 +1,64 @@
 class WikisController < ApplicationController
+  before_action :set_wiki, only: [:show, :edit, :update, :destroy]
+
+  def new
+    @wiki = Wiki.new
+    authorize @wiki
+  end
+
   def index
     @wikis = Wiki.all
   end
 
   def show
-    @wiki = Wiki.find(params[:id])
-  end
-
-  def new
-    @wiki = Wiki.new
   end
 
   def create
-    @wiki = Wiki.new
-    @wiki.assign_attributes(wiki_params)
+    @wiki = Wiki.new(wiki_params)
+    authorize @wiki
 
     if @wiki.save
-      flash[:notice] = "\"#{@wiki.title}\" was created successfully."
+      flash[:notice] = "Wiki was saved."
       redirect_to @wiki
     else
-      flash.now[:alert] = "There was an error creating the wiki. Please try again."
+      flash.new[:alert] = "There was an error saving the post. Please try again."
       render :new
     end
   end
 
   def edit
-    @wiki = Wiki.find(params[:id])
+    authorize @wiki
   end
 
   def update
-    @wiki = Wiki.find(params[:id])
-    @wiki.assign_attributes(wiki_params)
-
-    if @wiki.save
-      flash[:notice] = "\"#{@wiki.title}\" was updated successfully."
+    authorize @wiki
+    if @wiki.update_attributes(wiki_params)
+      flash[:notice] = "Wiki was updated."
       redirect_to @wiki
     else
-      flash.now[:alert] = "There was an error updating the wiki."
+      flash.now[:alert] = "There was an error saving the wiki. Please try again."
       render :edit
     end
   end
 
   def destroy
-    @wiki = Wiki.find(params[:id])
-
+    authorize @wiki
     if @wiki.destroy
-          flash[:notice] = "\"#{@wiki.title}\" was deleted successfully."
-          @wikis = Wiki.all
-          render :index
+      flash[:notice] = "\"#{@wiki.title}\" was deleted successfully."
+      redirect_to wikis_path
     else
-          flash.now[:alert] = "There was an error deleting the wiki."
-          render :show
+      flash.now[:alert] = "There was an error deleting the post."
+      render :show
     end
   end
 
   private
 
-  def wiki_params
-      params.require(:wiki).permit(:title, :body)
+  def set_wiki
+    @wiki = Wiki.find(params[:id])
   end
 
+  def wiki_params
+    params.require(:wiki).permit(:title, :body, :private)
+  end
 end

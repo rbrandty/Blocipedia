@@ -7,43 +7,42 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body class="<%= @body_class %>">
   <div class="container">
-     <ul class="nav nav-tabs">
-       <li><%= link_to "Blocipedia", root_path %></li>
-       <li><%= link_to "Wikis", wikis_path %></li>
-       <li><%= link_to "About", about_path %></li>
-
-     </ul>
-
-   <% if user_signed_in? %>
-       Signed in as: <strong><%= current_user.email %></strong> |
-       <%= link_to 'Profile', edit_user_registration_path, :class => 'navbar-link' %> - <%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
-   <% else %>
-      <%= link_to "Sign Up", new_user_registration_path, :class => 'navbar-link'  %> -
-      <%= link_to "Sign In", new_user_session_path, :class => 'navbar-link'  %>
-   <% end %>
-
-   <% if flash[:notice] %>
-       <div class="alert alert-success">
-         <button type="button" class="close" data-dismiss="alert">&times;</button>
-         <%= flash[:notice] %>
-       </div>
-     <% elsif flash.now[:alert] %>
-       <div class="alert alert-danger">
-         <button type="button" class="close" data-dismiss="alert">&times;</button>
-         <%= flash.now[:alert] %>
-       </div>
-     <% elsif flash[:alert] %>
-       <div class="alert alert-warning">
-         <button type="button" class="close" data-dismiss="alert">&times;</button>
-         <%= flash[:alert] %>
-       </div>
+    <% if user_signed_in? %>
+    Signed in as: <strong> <%= "#{current_user.name} - #{current_user.email} (#{current_user.role})" %></strong>
+    <ul class="nav nav-pills pull-right">
+      <li class="active"><%= link_to 'Edit profile', edit_user_registration_path, :class => '' %> </li>
+      <li class="active"><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => '' %> </li>
+      <li class="active"><%= link_to "Wikis", wikis_path, class: '' %> </li>
+    </ul>
+    <% else %>
+    <ul class="nav nav-pills pull-right">
+      <li class="active"><%= link_to "Sign Up", new_user_registration_path, :class => 'pull-right'  %> </li>
+      <li class="active"><%= link_to "Sign In", new_user_session_path, :class => 'pull-right'  %> </li>
+    </ul>
     <% end %>
 
-     <%= yield %>
-
- </div>
-
-</body>
+    <hr>
+    <div class="flash">
+      <% if flash[:notice] %>
+      <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= flash[:notice] %>
+      </div>
+      <% elsif flash[:error] %>
+      <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= flash[:error] %>
+      </div>
+      <% elsif flash[:alert] %>
+      <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= flash[:alert] %>
+      </div>
+      <% end %>
+    </div>
+    <%= yield %>
+  </body>
+</div>
 </html>
