@@ -15,13 +15,14 @@ class WikisController < ApplicationController
 
   def create
     @wiki = Wiki.new(wiki_params)
+@wiki.user = current_user
     authorize @wiki
 
     if @wiki.save
       flash[:notice] = "Wiki was saved."
       redirect_to @wiki
     else
-      flash.new[:alert] = "There was an error saving the post. Please try again."
+      flash[:notice] = "There was an error saving your post.  Errors: #{@wiki.errors.full_messages}"
       render :new
     end
   end
@@ -33,10 +34,10 @@ class WikisController < ApplicationController
   def update
     authorize @wiki
     if @wiki.update_attributes(wiki_params)
-      flash[:notice] = "Wiki was updated."
+    flash[:notice] = "Wiki was updated."
       redirect_to @wiki
     else
-      flash.now[:alert] = "There was an error saving the wiki. Please try again."
+      flash[:notice] = "There was an error saving the wiki. Please try again."
       render :edit
     end
   end

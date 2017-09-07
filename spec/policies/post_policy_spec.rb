@@ -6,23 +6,23 @@ RSpec.describe PostPolicy do
 
   subject { described_class }
 
-  permissions ".scope" do
+  context ".scope" do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 
-  permissions :show? do
+  context :show? do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 
-  permissions :create? do
+  context :create? do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 
-  permissions :update? do
+  context :update? do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 
-  permissions :destroy? do
+  context :destroy? do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 end

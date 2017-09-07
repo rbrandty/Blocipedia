@@ -1,13 +1,25 @@
 <%= form_for @wiki do |f| %>
   <div class="form-group">
     <%= f.label :title %>
-    <%= f.text_field :title, autofocus: true,   class: 'form-control', placeholder: "Enter wiki name" %>
-    <%= f.label :body %>
-    <%= f.text_area :body,                      class: 'form-control', placeholder: "Enter wiki content" %>
-    <p>**bold** _italic_ `code` >quote * - bullet list"</p>
-    <%= f.label :private %>
-    <%= f.check_box :private,                   class: 'checkbox' %>
+    <%= f.text_field :title, class: 'form-control', placeholder: "Enter wiki title" %>
   </div>
+
+  <div class="form-group">
+      <%= f.label :body %>
+      <%= f.text_area :body, rows: 8, class: 'form-control', placeholder: "Enter wiki body" %>
+  </div>
+
+  <% if current_user.admin? || current_user.premium? %>
+    <div class="form-group">
+        <%= f.label :private, class: 'checkbox' do %>
+        <%= f.check_box :private %> Private wiki
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @wiki.private %>
+     <%= render partial: 'collaborators/form', locals: { f: f } %>
+  <% end %>
+
   <%= f.submit "Save", class: 'btn btn-success' %>
-  <%= link_to "Cancel", wikis_path, class: 'btn btn-success' %>
-<% end %>
+  <% end %>
