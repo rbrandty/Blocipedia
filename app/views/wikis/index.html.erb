@@ -1,21 +1,28 @@
-<h1>Wikis</h1>
+<br>
+<h1>Public Wikis</h1>
 
-<% if user_is_authorized_to_create? %>
-<div class="row">
-  <div class="col-md-4">
-    <%= link_to "Make a New Wiki", new_wiki_path, class: 'btn btn-success' %>
-  </div>
-</div>
-<% end %>
+
+    <% if current_user %>
+    <%= link_to "Create", new_wiki_path %>
+    <% end %>
+
+<div class = "tall teal scrollable container">
+
 <% @wikis.each do |wiki| %>
-<tr>
-  <td><%= link_to wiki.title, wiki %></td>
-  <td><%= link_to "edit", edit_wiki_path(wiki)%></td>
-  <td><%= link_to "delete", [wiki], method: :delete, data: {confirm: 'Are you sure you want to delete this wiki?'} %></td>
-</tr>
-<% end %>
-</table>
-</div>
-<div class="center">
-  <%= link_to "New Wiki", new_wiki_path, class: 'btn btn-success' %>
+
+ <div class = 'row'>
+
+  <div class="col-md-2 col-md-offset-3 no-overflow shift-down">
+    <%= link_to wiki.title, wiki %>
+  </div>
+
+  <div class="col-md-2 no-overflow shift-down">
+    <% if policy(wiki).edit? %>
+    <%= link_to "Edit", edit_wiki_path(wiki) %>
+    <% end %>
+  </div>
+
+  </div>
+
+ <% end %>
 </div>

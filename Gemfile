@@ -35,6 +35,8 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'devise'
 gem 'pundit'
+gem 'will_paginate-bootstrap'
+gem 'bootstrap-sass'
 gem 'faker'
 
 group :development, :test do

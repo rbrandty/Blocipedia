@@ -1,48 +1,67 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
-50.times do
-  User.create!(
-    name:     Faker::Name.name,
+require 'faker'
+
+# Create Users
+20.times do
+  user = User.new(
+    name:     Faker::StarWars.character,
     email:    Faker::Internet.email,
-    password: Faker::Internet.password(8, 15)
+    password: Faker::Lorem.characters(10)
   )
+  user.save!
 end
+
 users = User.all
 
-#Create wikis
+# Create an admin user
+unless User.find_by(email: 'admin@example.com')
+  admin = User.new(
+    name:     'joe smith',
+    email:    'admin@example.com',
+    password: 'helloworld',
+    role:     'admin'
+  )
+  admin.save!
+end
+
+# Create a premium user
+unless User.find_by(email: 'premium@example.com')
+  premium = User.new(
+    name:     'joe smith',
+    email:    'premium@example.com',
+    password: 'helloworld',
+    role:     'premium'
+  )
+  premium.save!
+end
+
+# Create a standard user
+unless User.find_by(email: 'standard@example.com')
+  standard = User.new(
+    name:     'joe smith',
+    email:    'standard@example.com',
+    password: 'helloworld',
+    role:     'standard'
+  )
+  standard.save!
+end
+
+users = User.all
+
 100.times do
-  Wiki.create!(
-    user:     users.sample,
-    title:    Faker::Lorem.word + " " + Faker::Lorem.word,
-    body:     Faker::Lorem.paragraph,
-    private:  false
-  )
-end
-wikis = Wiki.all
+  owner = users.sample
+  w = Wiki.new
+  w.user = users.sample
+  w.title = Faker::StarWars.character + "'s " + Faker::Beer.name
+  w.body =  '**' + Faker::StarWars.quote + '** ' + Faker::Hipster.paragraph(rand(1..6)) + "\n\n" + rand(1..6).times.map { Faker::Hipster.paragraph(rand(1..10)) }.join("\n\n")
 
-#Generate data for Rachel
-User.first.update_attributes!(
-  name:     'Rachel Brandt',
-  email:    'rachel.brandt@gmail.com',
-  password: 'password'
-)
+  w.user = owner
+  w.user_ids = rand(0..10).times.map { (users - [owner]).sample.id }
+  w.title = Faker::Beer.name
+  w.body =  Faker::StarWars.character + Faker::StarWars.quote + Faker::Hipster.paragraph(rand(1..6)) + "\n" + rand(1..6).times.map { Faker::Hipster.paragraph(rand(1..10)) }.join("\n")
+  w.private = Faker::Boolean.boolean
 
-#Generate wikis for Rachel
-5.times do
-  Wiki.create!(
-    user:     User.first,
-    title:    Faker::Lorem.word + " " + Faker::Lorem.word,
-    body:     Faker::Lorem.paragraph,
-    private:  false
-    # created_at: Faker::Time.between(100.days.ago, Time.now, :all)
-  )
+  w.save!
 end
 
-puts "Seed finished"
-puts "#{User.count} users created!"
-puts "#{Wiki.count} Wikis created!"
+puts "#{Wiki.count} Wikis created"
+puts "#{User.count} Users created"

@@ -2,47 +2,47 @@
 <html>
 <head>
   <title>Blocipedia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
 </head>
-<body class="<%= @body_class %>">
-  <div class="container">
-    <% if user_signed_in? %>
-    Signed in as: <strong> <%= "#{current_user.name} - #{current_user.email} (#{current_user.role})" %></strong>
-    <ul class="nav nav-pills pull-right">
-      <li class="active"><%= link_to 'Edit profile', edit_user_registration_path, :class => '' %> </li>
-      <li class="active"><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => '' %> </li>
-      <li class="active"><%= link_to "Wikis", wikis_path, class: '' %> </li>
-    </ul>
-    <% else %>
-    <ul class="nav nav-pills pull-right">
-      <li class="active"><%= link_to "Sign Up", new_user_registration_path, :class => 'pull-right'  %> </li>
-      <li class="active"><%= link_to "Sign In", new_user_session_path, :class => 'pull-right'  %> </li>
-    </ul>
-    <% end %>
+<body>
+       <div class="pull-left shift-right">
+         <% if current_user %>
+         <%= link_to "My Wikis", current_user %>
+         <% end %>
+       </div>
 
-    <hr>
-    <div class="flash">
-      <% if flash[:notice] %>
-      <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <%= flash[:notice] %>
-      </div>
-      <% elsif flash[:error] %>
-      <div class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <%= flash[:error] %>
-      </div>
-      <% elsif flash[:alert] %>
-      <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <%= flash[:alert] %>
-      </div>
-      <% end %>
-    </div>
-    <%= yield %>
-  </body>
-</div>
+       <div class="pull-left shift-right">
+         <%= link_to "Public Wikis", wikis_path %>
+       </div>
+
+        <div class="pull-right shift-left user-info">
+         <% if current_user %>
+             Hello <%= current_user.email %>! <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+           <% else %>
+             <%= link_to "Sign In", new_user_session_path %>
+           <% end %>
+         </div>
+
+    <% if flash[:notice] %>
+         <div class="alert alert-success">
+           <button type="button" class="close" data-dismiss="alert">&times;</button>
+           <%= flash[:notice] %>
+         </div>
+       <% elsif flash[:error] %>
+         <div class="alert alert-danger">
+           <button type="button" class="close" data-dismiss="alert">&times;</button>
+           <%= flash[:error] %>
+         </div>
+       <% elsif flash[:alert] %>
+         <div class="alert alert-warning">
+           <button type="button" class="close" data-dismiss="alert">&times;</button>
+           <%= flash[:alert] %>
+         </div>
+       <% end %>
+
+<%= yield %>
+
+</body>
 </html>

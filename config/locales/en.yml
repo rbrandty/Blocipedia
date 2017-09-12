@@ -28,6 +28,10 @@
 #
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
-
 en:
   hello: "Hello world"
+
+  pundit:
+    default: 'You cannot perform this action.'
+    post_policy:
+      destroy?: 'You cannot destroy this post!'

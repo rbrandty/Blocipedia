@@ -1,65 +1,69 @@
 class WikisController < ApplicationController
-  before_action :set_wiki, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+
+  def index
+    @wikis = policy_scope(Wiki)
+  end
+
+  def show
+    @wiki = Wiki.find(params[:id])
+    authorize @wiki
+  end
 
   def new
     @wiki = Wiki.new
     authorize @wiki
+    @collaborations = User.all - [current_user]
   end
 
-  def index
-    @wikis = Wiki.all
-  end
-
-  def show
+  def edit
+    @wiki = Wiki.find(params[:id])
+    authorize @wiki
+    @wiki.user = current_user
+    @collaborations = User.all - [@wiki.user]
   end
 
   def create
     @wiki = Wiki.new(wiki_params)
-@wiki.user = current_user
-    authorize @wiki
-
+    @wiki.user = current_user
     if @wiki.save
-      flash[:notice] = "Wiki was saved."
+      flash[:notice] = "Your Wiki has been created"
       redirect_to @wiki
     else
-      flash[:notice] = "There was an error saving your post.  Errors: #{@wiki.errors.full_messages}"
+      flash.now[:alert] = "There was an error saving your Wiki, please try again."
       render :new
     end
   end
 
-  def edit
-    authorize @wiki
-  end
-
   def update
+    @wiki = Wiki.find(params[:id])
+    @wiki.assign_attributes(wiki_params)
     authorize @wiki
-    if @wiki.update_attributes(wiki_params)
-    flash[:notice] = "Wiki was updated."
+    if @wiki.save
+      flash[:notice] = "Your Wiki has been created"
       redirect_to @wiki
     else
-      flash[:notice] = "There was an error saving the wiki. Please try again."
-      render :edit
+      flash.now[:alert] = "There was an error saving your Wiki, please try again."
+      render :new
     end
   end
 
   def destroy
+    @wiki = Wiki.find(params[:id])
     authorize @wiki
-    if @wiki.destroy
-      flash[:notice] = "\"#{@wiki.title}\" was deleted successfully."
-      redirect_to wikis_path
+
+    if @wiki.delete
+      flash[:notice] = "Your Wiki has been deleted"
+      redirect_to request.referrer
     else
-      flash.now[:alert] = "There was an error deleting the post."
-      render :show
+      flash.now[:alert] = "We couldn't delete your wiki, please try again."
+      redirect_to request.referrer
     end
   end
 
   private
 
-  def set_wiki
-    @wiki = Wiki.find(params[:id])
-  end
-
   def wiki_params
-    params.require(:wiki).permit(:title, :body, :private)
+    params.require(:wiki).permit(:title, :body, :private, user_ids: [])
   end
 end
